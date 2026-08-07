@@ -1,0 +1,19 @@
+build/
+
+*.efi
+*.so
+*.o
+
+OVMF_VARS.fd
+
+esp.img
+
+# if ever used
+CMakeFiles/
+CMakeCache.txt
+cmake-build-*/
+
+# Logs
+*.log
+
+gnu-efi/
