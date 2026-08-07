@@ -60,7 +60,13 @@ $(BUILD)/main.o: src/main.c | $(BUILD)
 $(BUILD)/graphics.o: src/graphics.c | $(BUILD)
 	$(CC) $(CFLAGS) -c $< -o $@
 
-$(BUILD)/$(TARGET).so: $(BUILD)/main.o $(BUILD)/graphics.o
+$(BUILD)/renderer.o: src/renderer.c | $(BUILD)
+	$(CC) $(CFLAGS) -c $< -o $@
+
+$(BUILD)/bmp.o: src/bmp.c | $(BUILD)
+	$(CC) $(CFLAGS) -c $< -o $@
+
+$(BUILD)/$(TARGET).so: $(BUILD)/main.o $(BUILD)/graphics.o $(BUILD)/renderer.o $(BUILD)/bmp.o
 	$(LD) $(LDFLAGS) $^ $(LIBS) -o $@
 
 $(BUILD)/$(TARGET).efi: $(BUILD)/$(TARGET).so

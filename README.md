@@ -12,7 +12,10 @@ Instead of a traditional boot menu, two choices are given:
 ## Features
 
 - Native UEFI application
+- GNU-EFI based build system
 - Direct framebuffer rendering using the UEFI Graphics Output Protocol (GOP)
+- Software renderer
+- BMP asset loading
 - Custom software renderer
 - Bitmap image rendering
 - Keyboard navigation
@@ -23,24 +26,9 @@ Instead of a traditional boot menu, two choices are given:
 
 ## Project Status
 
-### Completed
+The project currently boots as a native UEFI, initializes GOP Graphics, accesses EFI filesystem, and successfully loads BMP assets from disk.
 
-- [x] Standalone GNU-EFI build system
-- [x] Graphics Output Protocol initialization
-- [x] Framebuffer access
-- [x] Screen clearing
-
-### In Progress
-
-- [ ] Software renderer
-- [ ] Primitive drawing
-- [ ] Bitmap loader
-- [ ] Asset rendering
-- [ ] Keyboard input
-- [ ] Hand animations
-- [ ] Boot menu
-- [ ] Windows chainloader
-- [ ] Linux chainloader
+The next task is to render decoded bitmap pixels to the framebuffer, after which the custom graphical boot menu and animations will be implemented.
 
 ---
 
