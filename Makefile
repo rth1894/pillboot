@@ -75,7 +75,16 @@ $(BUILD)/assets.o: src/assets.c | $(BUILD)
 $(BUILD)/input.o: src/input.c | $(BUILD)
 	$(CC) $(CFLAGS) -c $< -o $@
 
-$(BUILD)/$(TARGET).so: $(BUILD)/main.o $(BUILD)/graphics.o $(BUILD)/renderer.o $(BUILD)/image.o $(BUILD)/scene.o $(BUILD)/assets.o $(BUILD)/input.o
+$(BUILD)/boot.o: src/boot.c | $(BUILD)
+	$(CC) $(CFLAGS) -c $< -o $@
+
+$(BUILD)/chainload.o: src/chainload.c | $(BUILD)
+	$(CC) $(CFLAGS) -c $< -o $@
+
+$(BUILD)/linux.o: src/linux.c | $(BUILD)
+	$(CC) $(CFLAGS) -c $< -o $@
+
+$(BUILD)/$(TARGET).so: $(BUILD)/main.o $(BUILD)/graphics.o $(BUILD)/renderer.o $(BUILD)/image.o $(BUILD)/scene.o $(BUILD)/assets.o $(BUILD)/input.o $(BUILD)/boot.o $(BUILD)/chainload.o $(BUILD)/linux.o
 	$(LD) $(LDFLAGS) $^ $(LIBS) -o $@
 
 $(BUILD)/$(TARGET).efi: $(BUILD)/$(TARGET).so

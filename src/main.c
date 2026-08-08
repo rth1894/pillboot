@@ -2,8 +2,14 @@
 #include <efilib.h>
 
 #include "assets.h"
+#include "boot.h"
+#include "chainload.h"
+#include "efidef.h"
+#include "efierr.h"
 #include "graphics.h"
+#include "image.h"
 #include "input.h"
+#include "linux.h"
 #include "scene.h"
 
 EFI_STATUS efi_main(EFI_HANDLE ImageHandle, EFI_SYSTEM_TABLE *SystemTable) {
@@ -38,7 +44,7 @@ EFI_STATUS efi_main(EFI_HANDLE ImageHandle, EFI_SYSTEM_TABLE *SystemTable) {
     }
 
     Print(L"Assets OK\r\n");
-    MenuState menu = { .selected = MENU_LEFT };
+    MenuState menu = { .selected = MENU_LEFT, .confirmed = 0 };
     Print(L"Rendering scene...\r\n");
 
     scene_render(&gfx, &assets, &menu);
@@ -57,7 +63,14 @@ EFI_STATUS efi_main(EFI_HANDLE ImageHandle, EFI_SYSTEM_TABLE *SystemTable) {
                 break;
 
             case KEY_ENTER:
-                Print(L"ENTER\r\n");
+                if (menu.selected == MENU_LEFT) {
+                    status = linux_boot(ImageHandle, SystemTable);
+
+                    if (EFI_ERROR(status)) {
+                        Print(L"Linux boot failed: %r\r\n", status);
+                        while(1);
+                    }
+                }
                 break;
 
             case KEY_ESCAPE:

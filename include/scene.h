@@ -11,6 +11,7 @@ typedef enum {
 
 typedef struct {
     MenuSelection selected;
+    int confirmed;
 } MenuState;
 
 void scene_render(Graphics* gfx, Assets* assets, MenuState* state);

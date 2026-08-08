@@ -18,3 +18,8 @@ cmake-build-*/
 
 gnu-efi/
 get.sh
+compile-comands.json
+
+# my efi files for testing
+Microsoft/
+Arch/

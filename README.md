@@ -7,6 +7,8 @@ Instead of a traditional boot menu, two choices are given:
 - Red Pill → Boot Arch Linux
 - Blue Pill → Boot Windows
 
+![PillBoot demo](./works.gif)
+
 ---
 
 ## Features
@@ -22,17 +24,18 @@ Instead of a traditional boot menu, two choices are given:
 - Red Pill / Blue Pill menu scene
 - Animated menu selection
 - EFI filesystem access
+- Custom Linux boot (EFI handover protocol, no GRUB/stub required)
 - Designed to chainload existing Windows and Linux bootloaders
 
 ---
 
 ## Project Status
 
-The project currently boots as a native UEFI, initializes GOP Graphics, accesses EFI filesystem, and successfully loads BMP assets from disk.
+The project currently boots as a native UEFI application, initializes GOP graphics, accesses the EFI filesystem, and successfully loads QOI assets from disk. The graphical menu and asset pipeline are fully functional.
 
-The graohical menu and asset pipeline are now functional.
+Booting Arch Linux via the Red Pill option now works end-to-end: the kernel and initramfs are loaded from the ESP, `boot_params` is populated (including copying the kernel's real `setup_header` so fields like `initrd_addr_max` are valid), and control is handed off via the 64-bit EFI handover protocol.
 
-Next major task is to implement the actual red pill / blue pill boot actions, which include chainloading the appropriate existing bootloader.
+Next major task is implementing the Blue Pill (Windows) boot action, which will chainload the existing Windows Boot Manager (`bootmgfw.efi`).
 
 ---
 
@@ -68,7 +71,7 @@ Run:
 | Enter | Confirm selection|
 | Esc   | Escape           |
 
-Actual boot actions are not implemented yet.
+Red Pill boots Linux. Blue Pill (Windows) boot action is not implemented yet.
 
 ---
 
@@ -101,6 +104,23 @@ QOI was chosen because it is simple to decode and lightweight to use in a small 
 
 In previous bmp impl, color key transparency was to be used, did not work well for me.
 
-## Screenshots
+## Linux Boot
 
-Coming soon.
+Project loads the Linux kernel and initramfs directly from the ESP and boots them using the 64-bit EFI handover protocol (no GRUB or separate EFI stub chainload required).
+
+```text
+    vmlinuz + initramfs (ESP)
+       |
+    read_file()
+       |
+    load_kernel() -> relocatable kernel placed in memory
+       |
+    boot_params populated
+    (setup_header copied, ramdisk + cmdline pointers set)
+       |
+    EFI handover entry (kernel_addr + handover_offset + 0x200)
+       |
+    Linux kernel
+```
+
+Requires a 64-bit EFI handover-capable kernel (`xloadflags` with `XLF_EFI_HANDOVER_64` set, protocol >= 0x020b).
