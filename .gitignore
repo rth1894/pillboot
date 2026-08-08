@@ -17,3 +17,4 @@ cmake-build-*/
 *.log
 
 gnu-efi/
+get.sh

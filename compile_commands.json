@@ -1,6 +1,6 @@
 [
   {
-    "file": "src/main.c",
+    "file": "src/renderer.c",
     "arguments": [
       "/usr/bin/gcc",
       "-Iinclude",
@@ -23,42 +23,11 @@
       "-Wextra",
       "-Wstrict-prototypes",
       "-c",
-      "src/main.c",
+      "src/renderer.c",
       "-o",
-      "build/main.o"
+      "build/renderer.o"
     ],
     "directory": "/home/parth/pillboot",
-    "output": "build/main.o"
-  },
-  {
-    "file": "src/graphics.c",
-    "arguments": [
-      "/usr/bin/gcc",
-      "-Iinclude",
-      "-I/usr/include/efi",
-      "-I/usr/include/efi/x86_64",
-      "-DCONFIG_x86_64",
-      "-DGNU_EFI_USE_MS_ABI",
-      "-std=c11",
-      "-fPIC",
-      "-fPIE",
-      "-fshort-wchar",
-      "-maccumulate-outgoing-args",
-      "-mno-red-zone",
-      "-mno-avx",
-      "-ffreestanding",
-      "-fno-stack-protector",
-      "-fno-strict-aliasing",
-      "-fno-merge-all-constants",
-      "-Wall",
-      "-Wextra",
-      "-Wstrict-prototypes",
-      "-c",
-      "src/graphics.c",
-      "-o",
-      "build/graphics.o"
-    ],
-    "directory": "/home/parth/pillboot",
-    "output": "build/graphics.o"
+    "output": "build/renderer.o"
   }
 ]

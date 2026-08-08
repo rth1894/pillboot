@@ -1,32 +1,21 @@
+#include "image.h"
 #include "renderer.h"
-#include "graphics.h"
+#include "efiprot.h"
 
-void draw_pixel(Graphics *gfx, UINT32 x, UINT32 y, UINT8 r, UINT8 g, UINT8 b) {
-    if (x >= gfx->width || y >= gfx->height) return;
+void renderer_draw_image(Graphics* gfx, Image* img, INT32 x, INT32 y) {
+    for (UINT32 sy=0; sy < img->height; sy++) {
+        INT32 dy = y + sy;
+        if (dy < 0 || dy >= (INT32)gfx->height) continue;
 
-    EFI_GRAPHICS_OUTPUT_BLT_PIXEL* pixel = gfx->framebuffer + y * gfx->pixels_per_scanline + x;
-    pixel->Red = r;
-    pixel->Green = g;
-    pixel->Blue = b;
-    pixel->Reserved = 0;
-}
+        for (UINT32 sx=0; sx < img->width; sx++) {
+            INT32 dx = x + sx;
+            if (dx < 0 || dx >= (INT32)gfx->width) continue;
 
-void fill_rect(Graphics* gfx, UINT32 x, UINT32 y, UINT32 width, UINT32 height, UINT8 r, UINT8 g, UINT8 b) {
-    for (UINT32 yy=0; yy<height; yy++) {
-        for (UINT32 xx=0; xx<width; xx++) {
-            draw_pixel(gfx, x + xx, y + yy, r, g, b);
-        }
-    }
-}
+            EFI_GRAPHICS_OUTPUT_BLT_PIXEL* src = &img->pixels[sy * img->width + sx];
+            EFI_GRAPHICS_OUTPUT_BLT_PIXEL* dst = gfx->backbuffer + dy * gfx->pixels_per_scanline + dx;
 
-void draw_image(Graphics *gfx, UINT32 x, UINT32 y, UINT32 width, UINT32 height, const EFI_GRAPHICS_OUTPUT_BLT_PIXEL *pixels) {
-    for (UINT32 yy=0; yy<height; yy++) {
-        if (y + yy >= gfx->height) break;
-
-        for (UINT32 xx=0; xx<width; xx++) {
-            if (x + xx >=gfx->width) break;
-
-            gfx->framebuffer[(y+yy)* gfx->pixels_per_scanline + (x+xx)] = pixels[yy * width + xx];
+            if (src->Reserved == 0) continue;
+            *dst = *src;
         }
     }
 }

@@ -13,14 +13,16 @@ Instead of a traditional boot menu, two choices are given:
 
 - Native UEFI application
 - GNU-EFI based build system
-- Direct framebuffer rendering using the UEFI Graphics Output Protocol (GOP)
-- Software renderer
-- BMP asset loading
-- Custom software renderer
-- Bitmap image rendering
+- UEFI Graphics Output Protocol (GOP)
+- Software framebuffer renderer
+- Double-buffered rendering
+- QOI image loading
+- Custom image rendering
 - Keyboard navigation
-- Animated menu
-- Chainloads existing Windows and Linux bootloaders
+- Red Pill / Blue Pill menu scene
+- Animated menu selection
+- EFI filesystem access
+- Designed to chainload existing Windows and Linux bootloaders
 
 ---
 
@@ -28,7 +30,9 @@ Instead of a traditional boot menu, two choices are given:
 
 The project currently boots as a native UEFI, initializes GOP Graphics, accesses EFI filesystem, and successfully loads BMP assets from disk.
 
-The next task is to render decoded bitmap pixels to the framebuffer, after which the custom graphical boot menu and animations will be implemented.
+The graohical menu and asset pipeline are now functional.
+
+Next major task is to implement the actual red pill / blue pill boot actions, which include chainloading the appropriate existing bootloader.
 
 ---
 
@@ -54,6 +58,48 @@ Run:
 ```
 
 ---
+
+## Controls
+
+| Key   | Action           |
+| ----- | ---------------- |
+| <-    | Select red Pill  |
+| ->    | Select blue Pill |
+| Enter | Confirm selection|
+| Esc   | Escape           |
+
+Actual boot actions are not implemented yet.
+
+---
+
+## Rendering
+
+Project uses the UEFI Graphics output Protocol to obtain the framebuffer.
+Rendering is performed into a software backbuffer before being copied to the framebuffer.
+
+```text
+
+    Assets
+       |
+    QOI Decoder
+       |
+    Image
+       |
+    Scene
+       |
+    Software renderer
+       |
+    Backbuffer
+       |
+    Framebuffer
+       |
+    Display
+
+```
+
+QOI was chosen because it is simple to decode and lightweight to use in a small freestanding bootloader env.
+
+In previous bmp impl, color key transparency was to be used, did not work well for me.
 
 ## Screenshots
 

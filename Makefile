@@ -63,10 +63,19 @@ $(BUILD)/graphics.o: src/graphics.c | $(BUILD)
 $(BUILD)/renderer.o: src/renderer.c | $(BUILD)
 	$(CC) $(CFLAGS) -c $< -o $@
 
-$(BUILD)/bmp.o: src/bmp.c | $(BUILD)
+$(BUILD)/image.o: src/image.c | $(BUILD)
 	$(CC) $(CFLAGS) -c $< -o $@
 
-$(BUILD)/$(TARGET).so: $(BUILD)/main.o $(BUILD)/graphics.o $(BUILD)/renderer.o $(BUILD)/bmp.o
+$(BUILD)/scene.o: src/scene.c | $(BUILD)
+	$(CC) $(CFLAGS) -c $< -o $@
+
+$(BUILD)/assets.o: src/assets.c | $(BUILD)
+	$(CC) $(CFLAGS) -c $< -o $@
+
+$(BUILD)/input.o: src/input.c | $(BUILD)
+	$(CC) $(CFLAGS) -c $< -o $@
+
+$(BUILD)/$(TARGET).so: $(BUILD)/main.o $(BUILD)/graphics.o $(BUILD)/renderer.o $(BUILD)/image.o $(BUILD)/scene.o $(BUILD)/assets.o $(BUILD)/input.o
 	$(LD) $(LDFLAGS) $^ $(LIBS) -o $@
 
 $(BUILD)/$(TARGET).efi: $(BUILD)/$(TARGET).so

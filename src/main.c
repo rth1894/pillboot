@@ -1,31 +1,74 @@
 #include <efi.h>
 #include <efilib.h>
 
-#include "bmp.h"
+#include "assets.h"
 #include "graphics.h"
+#include "input.h"
+#include "scene.h"
 
-EFI_STATUS efi_main(EFI_HANDLE ImageHandle, EFI_SYSTEM_TABLE *SystemTable)
-{
+EFI_STATUS efi_main(EFI_HANDLE ImageHandle, EFI_SYSTEM_TABLE *SystemTable) {
     InitializeLib(ImageHandle, SystemTable);
+    Print(L"PillBoot started\r\n");
     Graphics gfx;
+    Print(L"Initializing graphics...\r\n");
 
     EFI_STATUS status = graphics_init(SystemTable, &gfx);
     if (EFI_ERROR(status)) {
-        Print(L"graphics_init failed\r\n");
+        Print(L"graphics_init FAILED\r\n");
+        while (1);
+    }
+    Print(L"Graphics OK\r\n");
+    Print(L"Initializing input...\r\n");
+    status = input_init(SystemTable);
+
+    if (EFI_ERROR(status)) {
+        Print(L"input_init FAILED\r\n");
         while (1);
     }
 
-    graphics_clear(&gfx, 255, 255, 255);
+    Print(L"Input OK\r\n");
+    Assets assets;
+    Print(L"Loading assets...\r\n");
 
-    Bitmap bmp;
-    status = bmp_load(ImageHandle, SystemTable, L"\\EFI\\BOOT\\assets\\left_hand.bmp", &bmp);
+    status = assets_load(ImageHandle, SystemTable, &assets);
 
-    if (EFI_ERROR(status)) graphics_clear(&gfx, 255, 0, 0);
-    else {
-        graphics_clear(&gfx, 0, 255, 0);
-        Print(L"Loaded!\r\n");
+    if (EFI_ERROR(status)) {
+        Print(L"assets_load FAILED\r\n");
+        while (1);
     }
 
-    while (1);
+    Print(L"Assets OK\r\n");
+    MenuState menu = { .selected = MENU_LEFT };
+    Print(L"Rendering scene...\r\n");
+
+    scene_render(&gfx, &assets, &menu);
+    Print(L"Scene rendered\r\n");
+
+    while (1) {
+        InputKey key = input_poll();
+
+        switch (key) {
+            case KEY_LEFT:
+                menu.selected = MENU_LEFT;
+                break;
+
+            case KEY_RIGHT:
+                menu.selected = MENU_RIGHT;
+                break;
+
+            case KEY_ENTER:
+                Print(L"ENTER\r\n");
+                break;
+
+            case KEY_ESCAPE:
+                Print(L"ESC\r\n");
+                break;
+
+            default:
+                break;
+        }
+
+        scene_render(&gfx, &assets, &menu);
+    }
     return EFI_SUCCESS;
 }
